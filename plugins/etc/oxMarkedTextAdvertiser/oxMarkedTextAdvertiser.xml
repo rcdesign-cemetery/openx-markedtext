@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>oxMarkedTextAdvertiser</name>
+    <creationDate>2011-04-26</creationDate>
+    <author>RC Design</author>
+    <authorUrl>https://github.com/rcdesign/openx-markedtext</authorUrl>
+    <license>MIT</license>
+    <description>Text ads with simple markup</description>
+    <version>0.1</version>
+    <oxversion>2.8.7</oxversion>
+    <extends>admin</extends>
+
+    <install>
+        <files>
+            <file path="{GROUPPATH}/">processSettings.php</file>
+            <file path="{GROUPPATH}/_lang/">en.mo</file>
+            <file path="{GROUPPATH}/_lang/po/">en.po</file>
+            <file path="{GROUPPATH}/_lang/">ru.mo</file>
+            <file path="{GROUPPATH}/_lang/po/">ru.po</file>
+            <file path="{ADMINPATH}/templates/">oxMarkedTextAdvertiser.html</file>
+            <file path="{ADMINPATH}/">oxMarkedTextAdvertiser-index.php</file>
+            <file path="{ADMINPATH}/">oxMarkedTextAdvertiser.class.php</file>
+            <file path="{ADMINPATH}/">banner-edit.php</file>
+            <file path="{ADMINPATH}/navigation/">oxMarkedTextAdvertiserEntityChecker.php</file>
+            <file path="{ADMINPATH}/lib/OX/oxMarkedTextAdvertiser/UI/">EntityFormManager.php</file>
+            <file path="{ADMINPATH}/lib/OX/oxMarkedTextAdvertiser/UI/">EntityHelper.php</file>
+            <file path="{ADMINPATH}/lib/OX/oxMarkedTextAdvertiser/UI/">EntityScreenManager.php</file>
+        </files>
+
+        <components>
+           <component>
+                <name>oxMarkedTextAdvertiser</name>
+                <hook>afterLogin</hook>
+                <hook>registerUiListeners</hook>
+                <hook>objectAccess</hook>
+           </component>
+        </components>
+
+        <navigation>
+            <checkers>
+                <checker class="Plugins_admin_oxMarkedTextAdvertiser_oxMarkedTextAdvertiserEntityChecker" include="oxMarkedTextAdvertiserEntityChecker.php" />
+            </checkers>
+            <advertiser>
+                <menu replace="campaign-banners"  checker="Plugins_admin_oxMarkedTextAdvertiser_oxMarkedTextAdvertiserEntityChecker"></menu>
+                <menu replace="banner-edit"       checker="Plugins_admin_oxMarkedTextAdvertiser_oxMarkedTextAdvertiserEntityChecker"></menu>
+            </advertiser>
+        </navigation>
+
+    </install>
+
+</plugin>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+    <name>oxMarkedText</name>
+    <creationDate>2011-04-25</creationDate>
+    <author>RC Design</author>
+    <authorUrl>https://github.com/rcdesign/openx-markedtext</authorUrl>
+    <license>MIT</license>
+    <description>Text ads with simple markup</description>
+    <version>0.1</version>
+    <oxversion>2.8.7</oxversion>
+    <extends>bannerTypeText</extends>
+
+    <install>
+
+        <files>
+            <file path="{GROUPPATH}/">processSettings.php</file>
+                        <!-- this extension requires a class and a delivery function -->
+            <file path="{MODULEPATH}bannerTypeText/oxMarkedText/">oxMarkedTextComponent.class.php</file>
+            <file path="{MODULEPATH}bannerTypeText/oxMarkedText/">oxMarkedTextComponent.delivery.php</file>
+            <!--file path="{MODULEPATH}bannerTypeHtml/oxMarkedText/_lang">en.mo</file-->
+        </files>
+
+        <!-- optional configuration settings and preferences -->
+        <configuration>
+
+            <setting key="textMaxLength" type="text" label="Ad Text max size (visible symbols count)" required="0" size="6" visible="1">100</setting>
+
+            <setting key="anchor1MaxLength"  type="text" label="Anchor 1 link max length" required="0" size="6" visible="1">20</setting>
+
+            <setting key="link1Style" type="text" label="Anchor 1 link style (any set of CSS attributes)" required="0" size="60" visible="1">rel=nofollow</setting>
+
+            <setting key="anchor2MaxLength"  type="text" label="Anchor 2 link max length" required="0" size="6" visible="1">7</setting>
+
+            <setting key="link2Style"  type="text" label="Anchor 2 link style (any set of CSS attributes)" required="0" size="60" visible="1">style='background:yellow;' rel=nofollow</setting>
+
+        </configuration>
+
+        <!-- details of individual components in this group -->
+        <components>
+           <!--component-->
+                <!--name>{COMPONENT}</name-->
+                <!-- optional language file -->
+                <!--translations>{MODULEPATH}bannerTypeText/oxMarkedText/_lang/</translations-->
+                <!-- optional hooks -->
+                <!--hook>{HOOK}</hook-->
+           <!--/component-->
+        </components>
+
+        <!-- optional database schema info -->
+
+
+    </install>
+
+</plugin>

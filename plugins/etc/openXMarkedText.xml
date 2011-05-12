@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml-stylesheet type="text/xsl" href=""?>
+
+<plugin>
+        <name>openXMarkedText</name>
+    <creationDate>2011-04-26</creationDate>
+    <author>RC Design</author>
+    <authorUrl>https://github.com/rcdesign/openx-markedtext</authorUrl>
+    <license>MIT</license>
+    <description>Text ads with simple markup</description>
+    <version>0.1</version>
+    <oxversion>2.8.7</oxversion>
+    <type>package</type>
+
+    <install>
+
+        <files>
+            <file path="{PLUGINPATH}">openXMarkedText.readme.txt</file>
+        </files>
+
+        <!-- list the groups that are contained in this plugin -->
+        <!-- in the order they should be installed -->
+        <contents>
+            <group name="oxMarkedTextAdvertiser">0</group>
+            <group name="oxMarkedText">1</group>
+
+        </contents>
+
+    </install>
+
+</plugin>
