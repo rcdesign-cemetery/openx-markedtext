@@ -2,7 +2,6 @@
 
 class OX_oxMarkedTextAdvertiser_UI_EntityScreenManager
 {
-
     private $oMarkedTextAdvertiserComponent;
     
     public function  __construct( Plugins_admin_oxMarkedTextAdvertiser_oxMarkedTextAdvertiser $oMarkedTextAdvertiserComponent )
@@ -12,36 +11,42 @@ class OX_oxMarkedTextAdvertiser_UI_EntityScreenManager
 
     public function beforePageHeader(OX_Admin_UI_Event_EventContext $oEventContext)
     {
-
         $pageId = $oEventContext->data['pageId'];
         $pageData = $oEventContext->data['pageData'];
         $oHeaderModel = $oEventContext->data['headerModel'];
+        $agencyId = $pageData['agencyid'];
+        $campaignId = $pageData['campaignid'];
+        $advertiserId = $pageData['clientid'];
         $oEntityHelper = $this->oMarkedTextAdvertiserComponent->getEntityHelper();
-        //$oUI = OA_Admin_UI::getInstance();
               
         if (OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER)) 
         {
             switch($pageId) {  
     
-                case 'campaign-banners' : {
+                case 'campaign-banners' : 
+                {
 
-                    if ( OA_Permission::hasAccessToObject('clients', $clientid) && OA_Permission::hasAccessToObject('campaigns', $campaignid) )
+                    $oDalZones = OA_Dal::factoryDAL('zones');
+                    $linkedWebsites = $oDalZones->getWebsitesAndZonesListByCategory($agencyId, null, $campaignId, true);
+                    $arraylinkedWebsitesKeys = array_keys( $linkedWebsites );
+                    $linkedWebsitesKey = $arraylinkedWebsitesKeys[0];
+                    $arraylinkedZonesKeys = array_keys( $linkedWebsites[$linkedWebsitesKey]['zones'] );
+                    $zoneId = $arraylinkedZonesKeys[0];
+
+                    $aZone = Admin_DA::getZone($zoneId);
+
+                    if ( $aZone['type'] == 3 ) 
                     {
-                        OX_Admin_Redirect::redirect('plugins/' . $this->oMarkedTextAdvertiserComponent->group . '/oxMarkedTextAdvertiser-index.php' );
-
-                     }
+                        if ( OA_Permission::hasAccessToObject('clients', $clientid) && OA_Permission::hasAccessToObject('campaigns', $campaignid) )
+                        {
+                            OX_Admin_Redirect::redirect('plugins/' . $this->oMarkedTextAdvertiserComponent->group . "/oxMarkedTextAdvertiser-index.php?campaignid=$campaignId&clientid=$advertiserId" );
+                        }
+                    }
 
                 break;
-                }
 
+                }
             }        
         } 
-        else
-        {
-			
-			return null;
-			
-		}
     }
-
 }

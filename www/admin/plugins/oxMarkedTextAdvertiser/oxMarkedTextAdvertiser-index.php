@@ -90,7 +90,20 @@ if ($clientid > 0)
         }
     }
 }
+$agencyId = OA_Permission::getAgencyId();
+$oDalZones = OA_Dal::factoryDAL('zones');
+$linkedWebsites = $oDalZones->getWebsitesAndZonesListByCategory($agencyId, null, $campaignid, true);
+$arraylinkedWebsitesKeys = array_keys( $linkedWebsites );
+$linkedWebsitesKey = $arraylinkedWebsitesKeys[0];
+$arraylinkedZonesKeys = array_keys( $linkedWebsites[$linkedWebsitesKey]['zones'] );
+$zoneId = $arraylinkedZonesKeys[0];
 
+$aZone = Admin_DA::getZone($zoneId);
+
+if ( $aZone['type'] != 3 ) 
+{
+		OX_Admin_Redirect::redirect("campaign-banners.php?clientid=$clientid&campaignid=$campaignid");
+}
 $pageName = 'oxmarkedtext-banners';
 $tabindex = 1;
 $agencyId = OA_Permission::getAgencyId();
