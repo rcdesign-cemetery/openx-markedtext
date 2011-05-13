@@ -229,7 +229,7 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
     $highlightedLinkMaxLength = $pluginConf['anchor2MaxLength'];
 
         $form->addElement('header', 'header_b_links', "Banner content");
-        $form->addElement('text', 'description', "Name" );
+        $form->addElement('text', 'description', $GLOBALS['strName'] );
 
         $fieldwithdescr[] = $form->createElement('textarea', 'bannertext', '<label for="bannertext" style="display: block; float: left; width: 170px;">Banner text</label>' );
         $fieldwithdescr[] = $form->createElement('static',
