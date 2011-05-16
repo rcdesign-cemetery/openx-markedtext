@@ -5,7 +5,7 @@ require_once MAX_PATH . '/lib/OA/Dal.php';
 require_once MAX_PATH . '/lib/OA/Creative/File.php';
 require_once MAX_PATH . '/www/admin/config.php';
 require_once MAX_PATH . '/lib/max/other/common.php';
-require_once MAX_PATH . '/lib/max/other/html.php';
+//require_once MAX_PATH . '/lib/max/other/html.php';
 require_once MAX_PATH . '/lib/OA/Admin/UI/component/Form.php';
 require_once MAX_PATH . '/lib/OA/Maintenance/Priority.php';
 
@@ -184,7 +184,7 @@ else {
 
 function displayPage($bannerid, $campaignid, $clientid, $bannerTypes, $aBanner, $type, $form, $ext_bannertype, $formDisabled=false)
 {
-    $pageName = 'oxmarkedtext-banners';
+    $pageName = 'advertiser-campaigns';
     $aEntities = array('clientid' => $clientid, 'campaignid' => $campaignid, 'bannerid' => $bannerid);
 
     $entityId = OA_Permission::getEntityId();
@@ -193,7 +193,67 @@ function displayPage($bannerid, $campaignid, $clientid, $bannerTypes, $aBanner, 
 
     $aOtherCampaigns = Admin_DA::getPlacements(array($entityType => $entityId));
     $aOtherBanners = Admin_DA::getAds(array('placement_id' => $campaignid), false);
-    MAX_displayNavigationBanner( 'advertiser-campaigns', $aOtherCampaigns, $aOtherBanners, $aEntities);
+
+    $advertiserId = $aEntities['clientid'];
+    $campaignId = $aEntities['campaignid'];
+    $bannerId = $aEntities['bannerid'];
+    $entityString = _getEntityString($aEntities);
+    $aOtherEntities = $aEntities;
+    unset($aOtherEntities['bannerid']);
+    $otherEntityString = _getEntityString($aOtherEntities);
+    if ($pageName == 'banner-edit.php' && empty($bannerId)) {
+                $tabValue = 'banner-edit_new';
+                $pageType = 'edit-new';
+    }
+    else {
+    	$pageType = 'edit';
+    }
+
+    $advertiserEditUrl = '';
+    $campaignEditUrl = '';
+
+    if (OA_Permission::hasAccessToObject('clients', $advertiserId)) {
+        $advertiserEditUrl = "advertiser-edit.php?clientid=$advertiserId";
+    }
+    if (!OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER)) {
+        $campaignEditUrl = "campaign-edit.php?clientid=$advertiserId&campaignid=$campaignId";
+    }
+
+    if ($bannerId && !empty($GLOBALS['_MAX']['PREF']['ui_show_banner_preview']) && empty($_GET['nopreview'])) {
+        require_once (MAX_PATH . '/lib/max/Delivery/adRender.php');
+        $aBanner = Admin_DA::getAd($bannerId);
+        $aBanner['storagetype'] = $aBanner['type'];
+        $aBanner['bannerid'] = $aBanner['ad_id'];
+        $bannerCode = MAX_adRender($aBanner, 0, '', '', '', true, '', false, false);
+    }
+    else {
+        $bannerCode = '';
+    }
+
+    $advertiserDetails = phpAds_getClientDetails($advertiserId);
+    $advertiserName = $advertiserDetails['clientname'];
+    $campaignDetails = Admin_DA::getPlacement($campaignId);
+    $campaignName = $campaignDetails['name'];
+    $bannerName = $aOtherBanners[$bannerId]['name'];
+
+    $builder = new OA_Admin_UI_Model_InventoryPageHeaderModelBuilder();
+    $oHeaderModel = $builder->buildEntityHeader(array(
+                                      array("name" => $advertiserName, "url" => $advertiserEditUrl),
+                                      array("name" => $campaignName, "url" => $campaignEditUrl),
+                                      array("name" => $bannerName)),
+                                    "banner", $pageType);
+
+    global $phpAds_breadcrumbs_extra;
+    $phpAds_breadcrumbs_extra .= "<div class='bannercode'>$bannerCode</div>";
+    if ($bannerCode != '') {
+        $phpAds_breadcrumbs_extra .= "<br />";
+    }
+
+    addPageLinkTool($GLOBALS["strDuplicate"], MAX::constructUrl(MAX_URL_ADMIN, "plugins/oxMarkedTextAdvertiser/banner-modify.php?duplicate=true&clientid=$advertiserId&campaignid=$campaignId&bannerid=$bannerId&returnurl=".urlencode(basename($_SERVER['SCRIPT_NAME']))), "iconBannerDuplicate");
+    addPageShortcut($GLOBALS['strBackToBanners'], MAX::constructUrl(MAX_URL_ADMIN, "campaign-banners.php?clientid=$advertiserId&campaignid=$campaignId"), "iconBack");
+    $entityString = _getEntityString($aEntities);
+    addPageShortcut($GLOBALS['strBannerHistory'], MAX::constructUrl(MAX_URL_ADMIN, "stats.php?entity=banner&breakdown=history&$entityString"), 'iconStatistics');
+    phpAds_PageHeader('advertiser-campaigns', $oHeaderModel);
 
     $oTpl = new OA_Admin_Template('banner-edit.html');
 
@@ -229,7 +289,7 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
     $highlightedLinkMaxLength = $pluginConf['anchor2MaxLength'];
 
         $form->addElement('header', 'header_b_links', "Banner content");
-        $form->addElement('text', 'description', $GLOBALS['strName'] );
+        $form->addElement('text', 'description', "Name" );
 
         $fieldwithdescr[] = $form->createElement('textarea', 'bannertext', '<label for="bannertext" style="display: block; float: left; width: 170px;">Banner text</label>' );
         $fieldwithdescr[] = $form->createElement('static',
@@ -252,7 +312,7 @@ function buildBannerForm($type, $aBanner, &$oComponent=null, $formDisabled=false
 	$weightPositiveRule = $translation->translate($GLOBALS['strXPositiveWholeNumberField'], array($GLOBALS['strWeight']));
 	$form->addRule('weight', $weightPositiveRule, 'numeric');
 
-        $form->addRule('bannertext', "Maximum $bannerTextMaxLength characters", 'maxlength', $bannerTextMaxLength, 'client' );
+        $form->addRule('bannertext', "Maximum $bannerTextMaxLength characters", 'maxlength', $bannerTextMaxLength );
 
     $form->addElement('controls', 'form-controls');
     $form->addElement('submit', 'submit', 'Save changes');
@@ -352,5 +412,6 @@ function processForm($bannerid, $form, &$oComponent, $formDisabled=false)
     Header("Location: $nextPage");
     exit;
 }
+
 
 ?>
