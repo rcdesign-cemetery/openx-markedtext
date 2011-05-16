@@ -3,7 +3,11 @@
 require_once '../../../../init.php';
 require_once '../../config.php';
 
+require_once MAX_PATH . '/lib/OA/Dal.php';
+require_once MAX_PATH . '/lib/OA/Dll.php';
 
+require_once MAX_PATH . '/lib/max/other/html.php';
+require_once MAX_PATH . '/lib/OA/Admin/Template.php';
 require_once MAX_PATH . '/lib/OA/Admin/TemplatePlugin.php';
 require_once MAX_PATH . '/lib/OA/Admin/UI/component/Form.php';
 require_once MAX_PATH . '/lib/OX/Admin/Redirect.php';
@@ -90,6 +94,7 @@ if ($clientid > 0)
         }
     }
 }
+
 $agencyId = OA_Permission::getAgencyId();
 $oDalZones = OA_Dal::factoryDAL('zones');
 $linkedWebsites = $oDalZones->getWebsitesAndZonesListByCategory($agencyId, null, $campaignid, true);
@@ -102,11 +107,12 @@ $aZone = Admin_DA::getZone($zoneId);
 
 if ( $aZone['type'] != 3 ) 
 {
-		OX_Admin_Redirect::redirect("campaign-banners.php?clientid=$clientid&campaignid=$campaignid");
+   OX_Admin_Redirect::redirect("campaign-banners.php?clientid=$clientid&campaignid=$campaignid");
 }
-$pageName = 'oxmarkedtext-banners';
+
+$pageName = 'campaign-banners';
 $tabindex = 1;
-$agencyId = OA_Permission::getAgencyId();
+
 $aEntities = array('clientid' => $clientid, 'campaignid' => $campaignid);
 $oTrans = new OX_Translation();
 
@@ -138,13 +144,7 @@ if (!isset($orderdirection)) {
     }
 }
 
-require_once MAX_PATH . '/lib/OA/Admin/Template.php';
-//$oUI = OA_Admin_UI::getInstance();
-
-
-//$oTpl = new OA_Plugin_Template('oxMarkedTextAdvertiser.html', 'oxMarkedTextAdvertiser'); 
-$oTpl = new OA_Admin_Template('banner-index.html');
-
+$oTpl = new OA_Plugin_Template('oxMarkedTextAdvertiser.html', 'oxMarkedTextAdvertiser'); 
 
 $doBanners = OA_Dal::factoryDO('banners');
 $doBanners->campaignid = $campaignid;
@@ -199,17 +199,14 @@ $oTpl->assign('aCount', $aCount);
 $oTpl->assign('hideinactive', $hideinactive);
 $oTpl->assign('listorder', $listorder);
 $oTpl->assign('orderdirection', $orderdirection);
-$oTpl->assign('isManager', false);
 
-$oTpl->assign('canACL', !OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER));
-$oTpl->assign('canEdit', !OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER) || OA_Permission::hasPermission(OA_PERM_BANNER_EDIT));
 $oTpl->assign('canActivate', !OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER) || OA_Permission::hasPermission(OA_PERM_BANNER_ACTIVATE));
 $oTpl->assign('canDeactivate', !OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER) || OA_Permission::hasPermission(OA_PERM_BANNER_DEACTIVATE));
-$oTpl->assign('canDelete', !OA_Permission::isAccount(OA_ACCOUNT_ADVERTISER));
 
 $session['prefs']['campaign-banners.php'][$campaignid]['hideinactive'] = $hideinactive;
 $session['prefs']['campaign-banners.php'][$campaignid]['listorder'] = $listorder;
 $session['prefs']['campaign-banners.php'][$campaignid]['orderdirection'] = $orderdirection;
+
 $session['prefs']['inventory_entities'][OA_Permission::getEntityId()]['clientid'] = $clientid;
 $session['prefs']['inventory_entities'][OA_Permission::getEntityId()]['campaignid'][$clientid] = $campaignid;
 
