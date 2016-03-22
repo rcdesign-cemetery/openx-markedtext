@@ -16,7 +16,7 @@ Installation
 3. Go to `openXMarkedText` settings, and tune styles/limits
   - (!) Don't use double quotes in attributes, only single one. OX has a bug, and " in config file crashes everything 
 4. Create Text Zone, Users, Text campaigns.
-5. That's all. For text campains users will be able to manage their banners:
+5. That's all. For text campaigns users will be able to manage their banners:
   - start/stop
   - create new
 
